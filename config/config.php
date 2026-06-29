@@ -10,7 +10,36 @@ const APP_DEFAULT_OWNER_EMAIL = 'nikolay@stoykow.de';
 function envValue(string $key, string $default = ''): string
 {
     $value = getenv($key);
-    return $value === false ? $default : $value;
+    if ($value !== false) {
+        return $value;
+    }
+
+    $localConfig = localConfig();
+    if (array_key_exists($key, $localConfig)) {
+        return (string) $localConfig[$key];
+    }
+
+    return $default;
+}
+
+function localConfig(): array
+{
+    static $config = null;
+
+    if (is_array($config)) {
+        return $config;
+    }
+
+    $path = __DIR__ . '/local.php';
+    if (!is_file($path)) {
+        $config = [];
+        return $config;
+    }
+
+    $loadedConfig = require $path;
+    $config = is_array($loadedConfig) ? $loadedConfig : [];
+
+    return $config;
 }
 
 function db(): PDO

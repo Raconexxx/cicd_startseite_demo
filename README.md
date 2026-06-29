@@ -124,9 +124,9 @@ Ablauf:
 validate -> deploy -> smoke
 ```
 
-GitHub Actions ist als Demo für klassisches Webhosting gedacht. Die YAML ist aktuell auf `ftps`, Port `21` und Zielpfad `/` eingestellt. Wenn ein Hoster stattdessen `sftp` oder einen anderen Pfad braucht, wird das bewusst in der Workflow-Datei geändert.
+GitHub Actions ist als Demo für klassisches Webhosting gedacht. Die YAML ist aktuell auf `ftps`, Port `21`, Zielpfad `/` und Datenbankhost `localhost` eingestellt. Wenn ein Hoster stattdessen `sftp`, einen anderen Pfad oder einen anderen Datenbankhost braucht, wird das bewusst in der Workflow-Datei geändert.
 
-Für das GitHub-Deployment reichen vier Einträge.
+Für das GitHub-Deployment werden die Zugangsdaten getrennt nach öffentlichen Variablen und geheimen Secrets gepflegt.
 
 Repository Variables:
 
@@ -141,6 +141,9 @@ Repository Secrets:
 |---|---|
 | `STARTSEITE_DEPLOY_USER` | FTP-/SFTP-Benutzer |
 | `STARTSEITE_DEPLOY_PASSWORD` | FTP-/SFTP-Passwort |
+| `MARIADB_DATABASE` | Datenbankname auf dem Webspace |
+| `MARIADB_USER` | Datenbankbenutzer auf dem Webspace |
+| `MARIADB_PASSWORD` | Passwort des Datenbankbenutzers |
 
 Fest in `.github/workflows/ci.yml`:
 
@@ -149,6 +152,11 @@ Fest in `.github/workflows/ci.yml`:
 | Deployment-Methode | `ftps` |
 | Port | `21` |
 | Zielpfad | `/` |
+| Datenbankhost | `localhost` |
+
+Beim GitHub-Deployment erzeugt die Pipeline vor dem Upload eine nicht versionierte Datei `config/local.php`. Diese Datei enthält die DB-Zugangsdaten aus den GitHub-Secrets und wird mit auf den Webspace kopiert. Sie liegt deshalb in `.gitignore` und darf nicht ins Repository committed werden.
+
+Die Datenbank selbst muss beim klassischen Hoster vorher existieren. Die App legt danach beim ersten Aufruf die benötigten Tabellen automatisch an, weil `config/bootstrap.php` `ensureSchema($pdo)` ausführt. Im Docker-/GitLab-Setup erstellt MariaDB die Datenbank über die Compose-Variablen.
 
 ## CI/CD-Variablen in GitLab und GitHub
 
@@ -170,6 +178,7 @@ Empfehlung:
 - `SSH_PASSWORD` schützen, wenn `main` ein geschützter Branch ist
 - keine produktiven Werte in `.env.example` schreiben
 - keine Screenshots mit sichtbaren Passwörtern veröffentlichen
+- für das GitLab-Docker-Ziel bleiben die DB-Werte in der Docker-`.env`, nicht in der Pipeline
 
 ### GitHub
 

@@ -48,12 +48,42 @@ jobs:
       STARTSEITE_DEPLOY_METHOD: ftps
       STARTSEITE_DEPLOY_PORT: '21'
       STARTSEITE_DEPLOY_PATH: /
+      STARTSEITE_DB_HOST: localhost
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
       - name: Install deploy tools
         run: sudo apt-get update && sudo apt-get install -y lftp openssh-client sshpass
+
+      - name: Create deployed PHP config
+        env:
+          DB_HOST: ${{ env.STARTSEITE_DB_HOST }}
+          DB_NAME: ${{ secrets.MARIADB_DATABASE }}
+          DB_USER: ${{ secrets.MARIADB_USER }}
+          DB_PASS: ${{ secrets.MARIADB_PASSWORD }}
+        run: |
+          set -eu
+
+          test -n "$DB_HOST"
+          test -n "$DB_NAME"
+          test -n "$DB_USER"
+          test -n "$DB_PASS"
+
+          php -r '
+          $config = [
+              "DB_HOST" => getenv("DB_HOST"),
+              "DB_NAME" => getenv("DB_NAME"),
+              "DB_USER" => getenv("DB_USER"),
+              "DB_PASS" => getenv("DB_PASS"),
+          ];
+          file_put_contents("config/local.php", "<?php\nreturn " . var_export($config, true) . ";\n");
+          '
 
       - name: Deploy via FTP, FTPS or SFTP
         env:
