@@ -15,6 +15,7 @@ validate:startseite:
     - grep -q "PHP-Session-Cookie" datenschutz.php
     - >
       if grep -R
+      --exclude="README.md"
       --exclude=".env.example"
       --exclude=".gitlab-ci.yml"
       --exclude-dir=".github"

@@ -34,7 +34,7 @@ jobs:
 
       - name: Secret leak check
         run: |
-          if grep -R --exclude=".env.example" --exclude=".gitlab-ci.yml" --exclude-dir=".github" --exclude-dir=".git" "MARIADB_ROOT_PASSWORD=" .; then
+          if grep -R --exclude="README.md" --exclude=".env.example" --exclude=".gitlab-ci.yml" --exclude-dir=".github" --exclude-dir=".git" "MARIADB_ROOT_PASSWORD=" .; then
             echo "Geheimer Datenbankwert im Repository gefunden."
             exit 1
           fi

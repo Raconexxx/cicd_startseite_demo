@@ -284,7 +284,7 @@ Ein Smoke-Test ist ein schneller Grundtest. Er prüft nicht jede Detailfrage, so
 ### Secret-Leak-Check
 
 ```bash
-grep -R --exclude=".env.example" --exclude=".gitlab-ci.yml" --exclude-dir=".github" --exclude-dir=".git" "MARIADB_ROOT_PASSWORD=" .
+grep -R --exclude="README.md" --exclude=".env.example" --exclude=".gitlab-ci.yml" --exclude-dir=".github" --exclude-dir=".git" "MARIADB_ROOT_PASSWORD=" .
 ```
 
 Das ist ein einfacher Schutz. In produktiveren Projekten wären Werkzeuge wie `gitleaks` oder Secret-Scanning der Plattform sinnvoller.
