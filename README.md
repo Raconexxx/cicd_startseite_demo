@@ -172,7 +172,7 @@ SSH_PASSWORD
 
 Der Screenshot zeigt die Stelle in GitLab:
 
-![GitLab CI/CD-Variablen](assets/pictures/image.png)
+![GitLab CI/CD-Variablen](assets/pictures/github-variables.png)
 
 Empfehlung für echte Geheimnisse:
 
