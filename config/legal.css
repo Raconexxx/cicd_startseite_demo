@@ -46,13 +46,69 @@ body {
   box-shadow: var(--shadow);
 }
 
-.legal-card h1 {
-  margin: 0 0 14px;
+.legal-card h1,
+.legal-card h3,
+.legal-card h4,
+.legal-card h5 {
+  color: var(--text);
+  line-height: 1.25;
 }
 
-.legal-card p {
+.legal-card h1 {
+  margin: 0 0 18px;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.legal-card h3 {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.legal-card h4 {
+  margin: 26px 0 10px;
+  font-size: 1.22rem;
+}
+
+.legal-card h5 {
+  margin: 22px 0 8px;
+  font-size: 1.02rem;
+}
+
+.legal-card p,
+.legal-card li {
   color: var(--muted);
   line-height: 1.6;
+}
+
+.legal-card a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.legal-card a:hover {
+  text-decoration: underline;
+}
+
+.legal-card ul {
+  margin: 10px 0 18px;
+  padding-left: 24px;
+}
+
+.legal-card li + li {
+  margin-top: 8px;
+}
+
+.legal-card strong {
+  color: var(--text);
+}
+
+.legal-card hr {
+  margin: 28px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
 }
 
 .legal-placeholder {

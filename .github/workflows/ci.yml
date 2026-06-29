@@ -5,24 +5,84 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  check:
-    name: PHP und Docker-Konfiguration prüfen
+  validate:
+    name: Validate project
     runs-on: ubuntu-latest
-
     steps:
-      - name: Repository auschecken
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: PHP-Syntax prüfen
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: PHP syntax check
+        run: find . -path './.git' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Content smoke checks
         run: |
-          docker run --rm -v "$PWD":/app -w /app php:8.3-cli sh -lc '
-            find . -path "./.git" -prune -o -name "*.php" -print -exec php -l {} \;
-          '
+          test -f .env.example
+          test ! -f .env
+          grep -q "Impressum" impressum.php
+          grep -q "Datenschutz" datenschutz.php
+          grep -q "legal.css" impressum.php
+          grep -q "legal.css" datenschutz.php
 
-      - name: Beispielkonfiguration vorbereiten
-        run: cp .env.example .env
+      - name: Secret leak check
+        run: |
+          if grep -R --exclude=".env.example" --exclude=".gitlab-ci.yml" --exclude-dir=".github" --exclude-dir=".git" "MARIADB_ROOT_PASSWORD=" .; then
+            echo "Geheimer Datenbankwert im Repository gefunden."
+            exit 1
+          fi
 
-      - name: Docker-Compose-Datei prüfen
-        run: docker compose config
+  deploy:
+    name: Optional SSH deploy
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.ref == 'refs/heads/main' && vars.STARTSEITE_DEPLOY_ENABLED == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy via SSH password
+        env:
+          SSH_PASSWORD: ${{ secrets.STARTSEITE_SSH_PASSWORD }}
+          SSH_USER: ${{ vars.STARTSEITE_SSH_USER }}
+          SSH_HOST: ${{ vars.STARTSEITE_SSH_HOST }}
+          SSH_PORT: ${{ vars.STARTSEITE_SSH_PORT }}
+        run: |
+          tar \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.gitlab-ci.yml' \
+            --exclude='.env' \
+            --exclude='.env.example' \
+            --exclude='docker-compose.yml' \
+            -czf - . \
+          | SSHPASS="$SSH_PASSWORD" sshpass -e ssh \
+            -o StrictHostKeyChecking=accept-new \
+            -p "${SSH_PORT:-28862}" \
+            "${SSH_USER}@${SSH_HOST}" \
+            "tar -xzf - -C /var/www/html"
+
+  smoke:
+    name: Optional public smoke test
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.ref == 'refs/heads/main' && vars.STARTSEITE_DEPLOY_ENABLED == 'true'
+    steps:
+      - name: Check public pages
+        env:
+          STARTSEITE_PUBLIC_URL: ${{ vars.STARTSEITE_PUBLIC_URL }}
+        run: |
+          test -n "$STARTSEITE_PUBLIC_URL"
+          BASE_URL="$STARTSEITE_PUBLIC_URL"
+          curl -fsS "$BASE_URL/impressum.php" | grep -q "Impressum"
+          curl -fsS "$BASE_URL/datenschutz.php" | grep -q "Datenschutz"
