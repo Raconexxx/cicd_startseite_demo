@@ -4,6 +4,10 @@ Dieses Projekt ist eine bereinigte Unterrichtsversion einer kleinen internen Sta
 
 Ziel im Unterricht: Die Teilnehmenden sehen an einem realistisch wirkenden Projekt, wie Konfiguration, Build-/Prüfschritte, Deployment-Vorbereitung und Geheimnisse zusammenhängen.
 
+GitHub-Demo:
+
+- <https://github.com/stoykow/cicd_startseite_demo>
+
 ## Was wurde bereinigt?
 
 - keine privaten Domains
