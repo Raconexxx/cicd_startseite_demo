@@ -158,7 +158,20 @@ jobs:
         env:
           STARTSEITE_PUBLIC_URL: ${{ vars.STARTSEITE_PUBLIC_URL }}
         run: |
-          test -n "$STARTSEITE_PUBLIC_URL"
-          BASE_URL="$STARTSEITE_PUBLIC_URL"
-          curl -fsS "$BASE_URL/impressum.php" | grep -q "Impressum"
-          curl -fsS "$BASE_URL/datenschutz.php" | grep -q "Datenschutz"
+          set -eu
+
+          BASE_URL="${STARTSEITE_PUBLIC_URL:?STARTSEITE_PUBLIC_URL fehlt}"
+          BASE_URL="${BASE_URL%/}"
+
+          check_page() {
+            path="$1"
+            expected="$2"
+            url="$BASE_URL/$path"
+
+            echo "Prüfe $url"
+            curl -fsSL --max-time 20 "$url" -o response.html
+            grep -q "$expected" response.html
+          }
+
+          check_page "impressum.php" "Impressum"
+          check_page "datenschutz.php" "Datenschutz"
