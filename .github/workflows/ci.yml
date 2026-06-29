@@ -1,0 +1,28 @@
+name: Startseite CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  check:
+    name: PHP und Docker-Konfiguration prüfen
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: PHP-Syntax prüfen
+        run: |
+          docker run --rm -v "$PWD":/app -w /app php:8.3-cli sh -lc '
+            find . -path "./.git" -prune -o -name "*.php" -print -exec php -l {} \;
+          '
+
+      - name: Beispielkonfiguration vorbereiten
+        run: cp .env.example .env
+
+      - name: Docker-Compose-Datei prüfen
+        run: docker compose config

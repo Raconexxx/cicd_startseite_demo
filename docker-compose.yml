@@ -1,0 +1,67 @@
+services:
+  db:
+    image: mariadb:11
+    container_name: startseite-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - /srv/docker/startseite/data/db:/var/lib/mysql
+
+  app:
+    image: php:8.3-apache
+    container_name: startseite-app
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      APP_PUBLIC_BASE_URL: ${APP_PUBLIC_BASE_URL}
+      APP_ALLOW_REGISTRATION: ${APP_ALLOW_REGISTRATION}
+      APP_ALLOW_DEBUG_IMPERSONATION: ${APP_ALLOW_DEBUG_IMPERSONATION}
+      APP_DEFAULT_OWNER_EMAIL: ${APP_DEFAULT_OWNER_EMAIL}
+      SSH_USER: ${SSH_USER}
+      SSH_PASSWORD: ${SSH_PASSWORD}
+      SSH_PUBLIC_KEY: ${SSH_PUBLIC_KEY}
+      DB_HOST: db
+      DB_NAME: ${MARIADB_DATABASE}
+      DB_USER: ${MARIADB_USER}
+      DB_PASS: ${MARIADB_PASSWORD}
+    volumes:
+      - /srv/docker/startseite/data/htdocs:/var/www/html
+    command: >
+      bash -lc "
+        apt-get update &&
+        DEBIAN_FRONTEND=noninteractive apt-get install -y openssh-server ca-certificates &&
+        docker-php-ext-install pdo_mysql mysqli &&
+        mkdir -p /run/sshd &&
+        ssh-keygen -A &&
+        id -u \"$SSH_USER\" >/dev/null 2>&1 || useradd -m -s /bin/bash \"$SSH_USER\" &&
+        echo \"$SSH_USER:$SSH_PASSWORD\" | chpasswd &&
+        mkdir -p /home/$SSH_USER/.ssh &&
+        printf '%s\n' \"$SSH_PUBLIC_KEY\" > /home/$SSH_USER/.ssh/authorized_keys &&
+        chown -R $SSH_USER:$SSH_USER /home/$SSH_USER/.ssh &&
+        chmod 700 /home/$SSH_USER/.ssh &&
+        chmod 600 /home/$SSH_USER/.ssh/authorized_keys &&
+        chown -R $SSH_USER:$SSH_USER /var/www/html &&
+        /usr/sbin/sshd &&
+        apache2-foreground
+      "
+    ports:
+      - "28860:80"
+      - "28862:22"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2
+    container_name: startseite-phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "28861:80"

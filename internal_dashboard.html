@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interne Links</title>
+  <style>
+    /* Grundfarben und wiederverwendete Designwerte */
+    :root {
+      color-scheme: dark;
+      --bg: #08111f;
+      --bg-accent: radial-gradient(circle at top, rgba(56, 189, 248, 0.22), transparent 32%),
+        linear-gradient(160deg, #08111f 0%, #101f35 55%, #071018 100%);
+      --card: rgba(14, 24, 39, 0.86);
+      --card-hover: rgba(25, 40, 61, 0.96);
+      --text: #f8fafc;
+      --muted: #9fb0c8;
+      --border: rgba(148, 163, 184, 0.18);
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.32);
+      --field: rgba(7, 15, 27, 0.85);
+      --highlight: #56d0ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      background-image: var(--bg-accent);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* Abstand zwischen den großen Bereichen */
+    .section {
+      margin-bottom: 26px;
+    }
+
+    /* Oberer Such-Block */
+    .hero {
+      padding: 0;
+      max-width: 920px;
+      margin: 0 auto 28px;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Rahmen um die Link-Sektionen */
+    .section-shell {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(6, 13, 23, 0.5);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    /* Suchfeld + Button oben */
+    .search-form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      width: 100%;
+      margin: 0;
+    }
+
+    .search-input,
+    .search-button {
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      font: inherit;
+    }
+
+    /* Eingabefeld */
+    .search-input {
+      width: 100%;
+      padding: 12px 14px;
+      color: var(--text);
+      background: var(--field);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .search-input:focus {
+      border-color: rgba(86, 208, 255, 0.7);
+      box-shadow: 0 0 0 4px rgba(86, 208, 255, 0.12);
+    }
+
+    /* Such-Button */
+    .search-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 112px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #23c8ff 0%, #1788ff 100%);
+      color: #04111f;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    .search-button img {
+      width: 72px;
+      height: 24px;
+      display: block;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .search-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    /* Kartenraster:
+       minmax(...) steuert, wie breit eine einzelne Karte mindestens ist.
+       Kleinerer Wert = kleinere Karten und mehr Karten pro Zeile. */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 12px;
+    }
+
+    /* Einzelne Link-Karte */
+    a.card {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      min-height: 92px;
+      box-shadow: var(--shadow);
+      transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    a.card:hover {
+      background: var(--card-hover);
+      border-color: rgba(86, 208, 255, 0.34);
+      transform: translateY(-4px);
+    }
+
+    /* Oberer Icon-Bereich der Karte */
+    .card-icon {
+      width: 100%;
+      aspect-ratio: 16 / 7.4;
+      object-fit: contain;
+      border-bottom: 1px solid var(--border);
+      background:
+        radial-gradient(circle at top, rgba(86, 208, 255, 0.16), transparent 44%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(8, 15, 28, 0.98));
+      padding: 14px;
+    }
+
+    /* Unterer Textbereich der Karte */
+    .card-content {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    /* Titel innerhalb der Karte */
+    .title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .url {
+      font-size: 0.88rem;
+      color: var(--muted);
+      word-break: break-all;
+    }
+
+    /* Platzhalterkarten für noch nicht belegte externe Links */
+    .placeholder-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+      padding: 20px;
+      border: 1px dashed rgba(159, 176, 200, 0.35);
+      border-radius: 18px;
+      color: var(--muted);
+      background: rgba(9, 17, 31, 0.42);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* Mobile-Anpassungen */
+    @media (max-width: 700px) {
+      body {
+        padding: 18px;
+      }
+
+      .hero {
+        max-width: none;
+        margin: 0 0 22px;
+      }
+
+      .section-shell {
+        padding: 14px;
+      }
+
+      .search-form {
+        grid-template-columns: 1fr;
+        width: 100%;
+        margin: 0;
+      }
+
+      .search-button {
+        width: 100%;
+        min-width: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <section class="section hero">
+      <h2 class="section-title"></h2>
+      <form class="search-form" action="https://www.qwant.com/" method="get">
+        <input
+          class="search-input"
+          type="search"
+          name="q"
+          placeholder="Mit Qwant im Web suchen..."
+          aria-label="Qwant Suche"
+        />
+        <button class="search-button" type="submit" aria-label="Mit Qwant suchen" title="Mit Qwant suchen">
+          <img src="assets/icons/qwant_2024.svg" alt="Qwant Logo" loading="lazy" />
+        </button>
+      </form>
+    </section>
+
+    <section class="section">
+      <div class="section-shell">
+        <h2 class="section-title">Demo-Seiten</h2>
+        <div class="grid">
+          <a class="card" href="https://gitlab.example.local">
+            <img class="card-icon" src="assets/icons/gitlab.svg" alt="GitLab Logo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">GitLab Demo</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://vm.example.local">
+            <img class="card-icon" src="assets/icons/proxmox.svg" alt="Proxmox Logo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Runner VM</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://projekt.example.local">
+            <img class="card-icon" src="assets/icons/openclaw.svg" alt="OpenClaw Icon" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Projekt Demo</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://browser.example.local">
+            <img class="card-icon" src="assets/icons/chrome.svg" alt="Chrome Logo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Browser-Test</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://automation.example.local/">
+            <img class="card-icon" src="assets/icons/homeassistant.svg" alt="Home Assistant Icon" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Automation Demo</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://storage.example.local/">
+            <img class="card-icon" src="assets/icons/synology.svg" alt="Synology DS920 Icon" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Storage Demo</div>
+            </div>
+          </a>
+
+          <a class="card" href="http://router.example.local">
+            <img class="card-icon" src="assets/icons/fritzbox.svg" alt="FRITZ!Box Logo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Router Demo</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://portainer.example.local">
+            <img class="card-icon" src="assets/icons/docker.svg" alt="Docker Logo für Portainer" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Portainer Demo</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://fachbereich.example.local">
+            <img class="card-icon" src="assets/icons/buha.svg" alt="Buha Icon" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Fachbereich Demo</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://db.example.local">
+            <img class="card-icon" src="assets/icons/mariadb.svg" alt="MariaDB Logo für Datenbank Demo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Datenbank Demo</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-shell">
+        <h2 class="section-title">Externe Seiten</h2>
+        <div class="grid">
+          <a class="card" href="https://www.amazon.de">
+            <img class="card-icon" src="assets/icons/amazon-light.svg" alt="Amazon Logo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Amazon</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://www.thingiverse.com">
+            <img class="card-icon" src="assets/icons/thingiverse.svg" alt="Thingiverse Logo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Thingiverse</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://github.com">
+            <img class="card-icon" src="assets/icons/github-light.svg" alt="GitHub Logo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">GitHub</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://kas.all-inkl.com/login">
+            <img class="card-icon" src="assets/icons/all-inkl.svg" alt="ALL-INKL Logo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">ALL-INKL</div>
+            </div>
+          </a>
+
+          <a class="card" href="https://lesen.amazon.de/">
+            <img class="card-icon" src="assets/icons/kindle.svg" alt="Kindle Logo" loading="lazy" />
+            <div class="card-content">
+              <div class="title">Kindle</div>
+            </div>
+          </a>
+
+          <div class="placeholder-card">Platzhalter für externen Link</div>
+          <div class="placeholder-card">Platzhalter für externen Link</div>
+          <div class="placeholder-card">Platzhalter für externen Link</div>
+          <div class="placeholder-card">Platzhalter für externen Link</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
