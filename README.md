@@ -47,6 +47,44 @@ http://localhost:28860
 http://localhost:28861
 ```
 
+## Testen unter Windows mit VS Code
+
+Das Projekt kann unter Windows direkt aus VS Code getestet werden. Eine eigene Linux-VM ist dafür nicht nötig.
+
+Voraussetzung:
+
+- VS Code
+- Docker Desktop
+- Docker Desktop muss gestartet sein
+
+Vorgehen im VS-Code-Terminal:
+
+```powershell
+Copy-Item .env.example .env
+docker compose up -d
+docker compose ps
+```
+
+Danach im Browser öffnen:
+
+```text
+http://localhost:28860
+```
+
+Stoppen:
+
+```powershell
+docker compose down
+```
+
+Nur statisch ansehen geht auch ohne Docker:
+
+```text
+internal_dashboard.html
+```
+
+Dann funktionieren aber nur die statischen Karten. Login, Datenbank, Profile und phpMyAdmin brauchen Docker Compose oder eine vergleichbare PHP-/MariaDB-Umgebung.
+
 ## Wichtige Variablen
 
 | Variable | Bedeutung |
@@ -78,6 +116,47 @@ Im Projekt liegen Pipeline-Dateien für beide Plattformen:
 - GitLab CI/CD: `.gitlab-ci.yml`
 
 Damit kann das Projekt in GitHub laufen und später in ein lokales GitLab importiert oder gepusht werden.
+
+## Release und Upload
+
+Aktuell enthält das Projekt eine Einstiegspipeline zum Prüfen, aber noch kein echtes Produktivdeployment.
+
+Für ein echtes Release wäre die bevorzugte Variante:
+
+1. Pipeline prüft den Code.
+2. Pipeline erzeugt ein Release-Artefakt oder ein Container-Image.
+3. Ein Deploy-Job überträgt die Version auf den Zielserver.
+4. Der Zielserver startet oder aktualisiert die Anwendung.
+
+Empfehlung für den Upload:
+
+- bevorzugt: `ssh`, `scp` oder `rsync` über SSH
+- ebenfalls möglich: SFTP, weil es über SSH läuft
+- nur wenn der Hoster es zwingend verlangt: FTPS
+- vermeiden: unverschlüsseltes FTP
+
+Typische CI/CD-Secrets für ein SSH-Deployment:
+
+| Secret/Variable | Bedeutung |
+|---|---|
+| `DEPLOY_HOST` | Zielserver |
+| `DEPLOY_USER` | Benutzer für den Upload |
+| `DEPLOY_PATH` | Zielordner auf dem Server |
+| `SSH_PRIVATE_KEY` | privater Schlüssel für den Deploy-Zugriff |
+
+Vereinfachtes Beispiel für einen Deploy-Schritt:
+
+```bash
+rsync -av --delete --exclude ".git" --exclude ".env" ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH && docker compose up -d"
+```
+
+Für den Unterricht reicht erstmal die Einordnung:
+
+- Die Pipeline prüft.
+- Der Deploy-Job veröffentlicht.
+- Zugangsdaten liegen als Secrets in GitHub/GitLab, nicht im Repository.
+- SSH/SFTP ist für solche Deployments sauberer als klassisches FTP.
 
 ## Rechtliche Platzhalter
 
