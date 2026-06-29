@@ -16,11 +16,33 @@ require_once __DIR__ . '/config/config.php';
     <a class="back-link" href="/index.php">Zurück zur Startseite</a>
     <section class="legal-card">
       <h1>Impressum</h1>
-      <p>Diese Seite ist als Platzhalter angelegt.</p>
-      <div class="legal-placeholder">
-        <p><strong>Angaben gemäß § 5 TMG</strong></p>
-        <p>Name, Anschrift und Kontakt bitte ergänzen.</p>
-      </div>
+
+      <h4>Private Projektseite</h4>
+      <p>Diese Website ist ein privates, nicht gewerbliches Projekt.</p>
+
+      <h4>Verantwortlich für den Inhalt</h4>
+      <p>
+        Nikolay Stoykow<br />
+        Lutherstraße 29<br />
+        02826 Görlitz
+      </p>
+
+      <h5>Kontakt</h5>
+      <p>E-Mail: <a href="mailto:kontakt2026@stoykow.de">kontakt2026@stoykow.de</a></p>
+
+      <hr />
+
+      <h5>Haftung für Inhalte</h5>
+      <p>Die Inhalte dieser privaten Website wurden mit Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden. Sobald konkrete Rechtsverletzungen bekannt werden, werden entsprechende Inhalte umgehend entfernt.</p>
+
+      <h5>Haftung für Links</h5>
+      <p>Diese Website kann Links zu externen Webseiten enthalten, auf deren Inhalte kein Einfluss besteht. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich. Bei Bekanntwerden von Rechtsverletzungen werden entsprechende Links umgehend entfernt.</p>
+
+      <h5>Urheberrecht</h5>
+      <p>Die auf dieser Website erstellten Inhalte und Werke unterliegen dem deutschen Urheberrecht. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit Inhalte nicht selbst erstellt wurden, werden die Urheberrechte Dritter beachtet. Hinweise auf mögliche Urheberrechtsverletzungen können per E-Mail gesendet werden.</p>
+
+      <h5>Datenschutzerklärung</h5>
+      <p>Weitere Informationen zum Schutz Ihrer Daten finden Sie in der <a href="/datenschutz.php">Datenschutzerklärung</a>.</p>
     </section>
   </main>
 </body>

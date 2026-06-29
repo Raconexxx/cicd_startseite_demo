@@ -715,27 +715,29 @@ function duplicateProfile(PDO $pdo, int $userId, int $profileId, ?string $newNam
 function defaultSeedGroups(): array
 {
     return [
-        ['Lokale Demo', 10],
-        ['CI/CD Werkzeuge', 20],
-        ['Externe Beispiele', 30],
+        ['Interne Seiten', 10],
+        ['Externe Seiten', 20],
     ];
 }
 
 function defaultSeedLinks(): array
 {
     return [
-        ['Lokale Demo', 'Startseite', APP_PUBLIC_BASE_URL . '/index.php', 'assets/icons/chrome.svg', 'preset', 10],
-        ['Lokale Demo', 'phpMyAdmin Demo', 'http://localhost:28861', 'assets/icons/mariadb.svg', 'preset', 20],
-        ['Lokale Demo', 'Docker Host Demo', 'https://docker.example.local', 'assets/icons/docker.svg', 'preset', 30],
-        ['Lokale Demo', 'Storage Demo', 'https://storage.example.local', 'assets/icons/synology.svg', 'preset', 40],
-        ['CI/CD Werkzeuge', 'GitLab Demo', 'https://gitlab.example.local', 'assets/icons/gitlab.svg', 'preset', 10],
-        ['CI/CD Werkzeuge', 'GitHub', 'https://github.com', 'assets/icons/github-light.svg', 'preset', 20],
-        ['CI/CD Werkzeuge', 'Portainer Demo', 'https://portainer.example.local', 'assets/icons/docker.svg', 'preset', 30],
-        ['CI/CD Werkzeuge', 'Runner VM Demo', 'https://vm.example.local', 'assets/icons/proxmox.svg', 'preset', 40],
-        ['Externe Beispiele', 'Qwant', 'https://www.qwant.com', 'assets/icons/qwant_2024.svg', 'preset', 10],
-        ['Externe Beispiele', 'PHP Dokumentation', 'https://www.php.net/docs.php', 'assets/icons/chrome.svg', 'preset', 20],
-        ['Externe Beispiele', 'Docker Dokumentation', 'https://docs.docker.com', 'assets/icons/docker.svg', 'preset', 30],
-        ['Externe Beispiele', 'GitLab Dokumentation', 'https://docs.gitlab.com', 'assets/icons/gitlab.svg', 'preset', 40],
+        ['Interne Seiten', 'GitLab', 'https://gitlab.nik0.internal', 'assets/icons/gitlab.svg', 'preset', 10],
+        ['Interne Seiten', 'Proxmox', 'https://vm.nik0.internal', 'assets/icons/proxmox.svg', 'preset', 20],
+        ['Interne Seiten', 'OpenClaw', 'https://openclaw.nik0.internal', 'assets/icons/openclaw.svg', 'preset', 30],
+        ['Interne Seiten', 'ChromeOpenClaw', 'https://chrome.nik0.internal', 'assets/icons/chrome.svg', 'preset', 40],
+        ['Interne Seiten', 'Home Assistant', 'https://ha.nik0.internal/', 'assets/icons/homeassistant.svg', 'preset', 50],
+        ['Interne Seiten', 'Synology DS920', 'https://synology.nik0.internal/', 'assets/icons/synology.svg', 'preset', 60],
+        ['Interne Seiten', 'FRITZ!Box', 'http://192.168.112.1', 'assets/icons/fritzbox.svg', 'preset', 70],
+        ['Interne Seiten', 'Portainer', 'https://portainer.nik0.internal', 'assets/icons/docker.svg', 'preset', 80],
+        ['Interne Seiten', 'Buha', 'https://buha.nik0.internal', 'assets/icons/buha.svg', 'preset', 90],
+        ['Interne Seiten', 'BuhaDB', 'https://buhadb.nik0.internal', 'assets/icons/mariadb.svg', 'preset', 100],
+        ['Externe Seiten', 'Amazon', 'https://www.amazon.de', 'assets/icons/amazon-light.svg', 'preset', 10],
+        ['Externe Seiten', 'Thingiverse', 'https://www.thingiverse.com', 'assets/icons/thingiverse.svg', 'preset', 20],
+        ['Externe Seiten', 'GitHub', 'https://github.com', 'assets/icons/github-light.svg', 'preset', 30],
+        ['Externe Seiten', 'ALL-INKL', 'https://kas.all-inkl.com/login', 'assets/icons/all-inkl.svg', 'preset', 40],
+        ['Externe Seiten', 'Kindle', 'https://lesen.amazon.de/', 'assets/icons/kindle.svg', 'preset', 50],
     ];
 }
 
@@ -1020,7 +1022,7 @@ function debugEmailForToken(?string $token): ?string
     }
 
     return match ($token) {
-        'demo' => APP_DEFAULT_OWNER_EMAIL,
+        'niko' => APP_DEFAULT_OWNER_EMAIL,
         default => null,
     };
 }

@@ -1,7 +1,1 @@
 .env
-vendor/
-node_modules/
-coverage/
-.phpunit.result.cache
-assets/uploads/icons/*
-!assets/uploads/icons/.gitkeep

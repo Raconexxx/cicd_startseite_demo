@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="feature">
           <h3>Zentral</h3>
-          <p class="lead">Die zentrale Startseite bleibt für alle verfügbar und wird aus der Datenbank geladen.</p>
+          <p class="lead">Die zentrale Startseite bleibt fuer alle verfuegbar und wird aus der Datenbank geladen.</p>
         </div>
         <div class="feature">
           <h3>Erweiterbar</h3>

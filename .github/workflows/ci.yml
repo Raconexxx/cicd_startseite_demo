@@ -40,7 +40,7 @@ jobs:
           fi
 
   deploy:
-    name: Optional SSH deploy
+    name: Optional FTP/SFTP deploy
     runs-on: ubuntu-latest
     needs: validate
     if: github.ref == 'refs/heads/main' && vars.STARTSEITE_DEPLOY_ENABLED == 'true'
@@ -48,29 +48,71 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
+      - name: Install deploy tools
+        run: sudo apt-get update && sudo apt-get install -y lftp openssh-client sshpass
 
-      - name: Deploy via SSH password
+      - name: Deploy via FTP, FTPS or SFTP
         env:
-          SSH_PASSWORD: ${{ secrets.STARTSEITE_SSH_PASSWORD }}
-          SSH_USER: ${{ vars.STARTSEITE_SSH_USER }}
-          SSH_HOST: ${{ vars.STARTSEITE_SSH_HOST }}
-          SSH_PORT: ${{ vars.STARTSEITE_SSH_PORT }}
+          DEPLOY_METHOD: ${{ vars.STARTSEITE_DEPLOY_METHOD }}
+          DEPLOY_HOST: ${{ vars.STARTSEITE_DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ vars.STARTSEITE_DEPLOY_PORT }}
+          DEPLOY_USER: ${{ vars.STARTSEITE_DEPLOY_USER }}
+          DEPLOY_PATH: ${{ vars.STARTSEITE_DEPLOY_PATH }}
+          DEPLOY_PASSWORD: ${{ secrets.STARTSEITE_DEPLOY_PASSWORD }}
         run: |
-          tar \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='.gitlab-ci.yml' \
-            --exclude='.env' \
-            --exclude='.env.example' \
-            --exclude='docker-compose.yml' \
-            -czf - . \
-          | SSHPASS="$SSH_PASSWORD" sshpass -e ssh \
-            -o StrictHostKeyChecking=accept-new \
-            -p "${SSH_PORT:-28862}" \
-            "${SSH_USER}@${SSH_HOST}" \
-            "tar -xzf - -C /var/www/html"
+          set -eu
+
+          METHOD="${DEPLOY_METHOD:-ftps}"
+          HOST="${DEPLOY_HOST:?STARTSEITE_DEPLOY_HOST fehlt}"
+          USER="${DEPLOY_USER:?STARTSEITE_DEPLOY_USER fehlt}"
+          PASSWORD="${DEPLOY_PASSWORD:?STARTSEITE_DEPLOY_PASSWORD fehlt}"
+          TARGET_PATH="${DEPLOY_PATH:-/}"
+
+          case "$METHOD" in
+            ftp|ftps)
+              PORT="${DEPLOY_PORT:-21}"
+              SSL_FORCE="false"
+              if [ "$METHOD" = "ftps" ]; then
+                SSL_FORCE="true"
+              fi
+
+              lftp -u "$USER","$PASSWORD" -p "$PORT" "$HOST" <<EOF
+          set ftp:ssl-force $SSL_FORCE
+          set ftp:ssl-protect-data $SSL_FORCE
+          set ssl:verify-certificate no
+          mirror --reverse --verbose --delete \
+            --exclude-glob .git/ \
+            --exclude-glob .github/ \
+            --exclude-glob .env \
+            --exclude-glob .gitlab-ci.yml \
+            --exclude-glob docker-compose.yml \
+            ./ "$TARGET_PATH"
+          bye
+          EOF
+              ;;
+
+            sftp)
+              PORT="${DEPLOY_PORT:-22}"
+              tar \
+                --exclude='.git/' \
+                --exclude='.github/' \
+                --exclude='.env' \
+                --exclude='.gitlab-ci.yml' \
+                --exclude='docker-compose.yml' \
+                -czf - . \
+              | SSHPASS="$PASSWORD" sshpass -e ssh \
+                -o StrictHostKeyChecking=accept-new \
+                -p "$PORT" \
+                "$USER@$HOST" \
+                "mkdir -p '$TARGET_PATH' && tar -xzf - -C '$TARGET_PATH'"
+              ;;
+
+            *)
+              echo "Unbekannte Deployment-Methode: $METHOD"
+              echo "Erlaubt sind: ftp, ftps, sftp"
+              exit 1
+              ;;
+          esac
 
   smoke:
     name: Optional public smoke test

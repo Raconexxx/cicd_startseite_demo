@@ -385,7 +385,7 @@ $reusableLinks = $authUser !== null ? fetchReusableLinks($pdo, $userId, $activeG
 $profiles = $authUser !== null ? fetchUserProfiles($pdo, $userId) : [];
 $profileCount = $authUser !== null ? countUserProfiles($pdo, $userId) : 0;
 $currentProfileTokenUrl = $activeProfile !== null
-    ? APP_PUBLIC_BASE_URL . appUrl('/index.php', ['token' => $activeProfile['view_token']], false)
+    ? 'https://start.nik0.de' . appUrl('/index.php', ['token' => $activeProfile['view_token']], false)
     : null;
 
 $statement = $pdo->prepare(

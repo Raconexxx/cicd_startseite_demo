@@ -1,30 +1,17 @@
 <?php
 declare(strict_types=1);
 
-const APP_NAME = 'Startseite Demo';
+const APP_NAME = 'Startseite';
 const APP_BASE_PATH = __DIR__ . '/..';
+const APP_ALLOW_REGISTRATION = true;
+const APP_ALLOW_DEBUG_IMPERSONATION = true;
+const APP_DEFAULT_OWNER_EMAIL = 'nikolay@stoykow.de';
 
 function envValue(string $key, string $default = ''): string
 {
     $value = getenv($key);
     return $value === false ? $default : $value;
 }
-
-function envBool(string $key, bool $default = false): bool
-{
-    $value = getenv($key);
-
-    if ($value === false || $value === '') {
-        return $default;
-    }
-
-    return in_array(strtolower($value), ['1', 'true', 'yes', 'on'], true);
-}
-
-define('APP_ALLOW_REGISTRATION', envBool('APP_ALLOW_REGISTRATION', true));
-define('APP_ALLOW_DEBUG_IMPERSONATION', envBool('APP_ALLOW_DEBUG_IMPERSONATION', false));
-define('APP_DEFAULT_OWNER_EMAIL', envValue('APP_DEFAULT_OWNER_EMAIL', 'demo@example.local'));
-define('APP_PUBLIC_BASE_URL', rtrim(envValue('APP_PUBLIC_BASE_URL', 'http://localhost:28860'), '/'));
 
 function db(): PDO
 {

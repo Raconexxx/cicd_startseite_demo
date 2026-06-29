@@ -1,17 +1,60 @@
 stages:
-  - check
   - validate
+  - deploy
+  - smoke
 
-php_lint:
-  stage: check
+validate:startseite:
+  stage: validate
   image: php:8.3-cli
   script:
-    - find . -path "./.git" -prune -o -name "*.php" -print -exec php -l {} \;
+    - find . -path './.git' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
+    - test -f .env.example
+    - test ! -f .env
+    - grep -q "Private Projektseite" impressum.php
+    - grep -q "Datenschutzerklärung" datenschutz.php
+    - grep -q "PHP-Session-Cookie" datenschutz.php
+    - >
+      if grep -R
+      --exclude=".env.example"
+      --exclude=".gitlab-ci.yml"
+      --exclude-dir=".github"
+      --exclude-dir=".git"
+      "MARIADB_ROOT_PASSWORD=" .;
+      then
+        echo "Geheimer Datenbankwert im Repository gefunden.";
+        exit 1;
+      fi
 
-compose_validate:
-  stage: validate
-  image: docker:27
+deploy:startseite:ssh:
+  stage: deploy
+  image: alpine:3.20
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  before_script:
+    - apk add --no-cache openssh-client sshpass tar
   script:
-    - cp .env.example .env
-    - docker compose version
-    - docker compose config
+    - >
+      tar
+      --exclude='.git/'
+      --exclude='.gitlab-ci.yml'
+      --exclude='.env'
+      --exclude='.env.example'
+      --exclude='docker-compose.yml'
+      -czf - .
+      | SSHPASS="$SSH_PASSWORD" sshpass -e ssh
+      -o StrictHostKeyChecking=accept-new
+      -p 28862
+      "startseite@192.168.112.30"
+      "tar -xzf - -C /var/www/html"
+
+smoke:startseite:
+  stage: smoke
+  image: alpine:3.20
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - curl -fsS https://start.nik0.de/impressum.php | grep -q "Private Projektseite"
+    - curl -fsS https://start.nik0.de/datenschutz.php | grep -q "Datenschutzhinweise für diese private Projektseite"
+    - curl -fsS https://start.nik0.de/datenschutz.php | grep -q "PHP-Session-Cookie"
