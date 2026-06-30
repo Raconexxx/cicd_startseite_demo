@@ -96,7 +96,7 @@ function renderLinkCard(
     $contentHtml = $contentParts === [] ? '' : '<div class="card-content">' . implode('', $contentParts) . '</div>';
 
     return sprintf(
-        '<div class="%s"%s>%s%s<a class="card" href="%s" draggable="false">%s%s</a></div>',
+        '<div class="%s"%s>%s%s<a class="card" href="%s" target="_blank" rel="noopener noreferrer" draggable="false">%s%s</a></div>',
         $shellClasses,
         $shellAttributes,
         $dragHandle,
