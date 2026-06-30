@@ -209,13 +209,13 @@ function renderLinkModal(
             <label for="link_url">Adresse</label>
             <input id="link_url" name="url" type="url" placeholder="https://example.com" value="<?= htmlspecialchars((string) ($linkForm['url'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" required />
           </div>
-          <div class="builder-field">
+          <!--<div class="builder-field">
             <label for="source_type">Link-Typ</label>
             <select id="source_type" name="source_type">
               <option value="manual" <?= (($linkForm['source_type'] ?? 'manual') === 'manual') ? 'selected' : '' ?>>Manuell</option>
               <option value="preset" <?= (($linkForm['source_type'] ?? 'manual') === 'preset') ? 'selected' : '' ?>>Vordefiniert</option>
             </select>
-          </div>
+          </div> -->
           <div class="builder-field">
             <label>Icon</label>
             <div class="icon-choice-grid">
