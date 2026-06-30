@@ -26,6 +26,7 @@ validate:startseite:
         exit 1;
       fi
 
+
 deploy:startseite:ssh:
   stage: deploy
   image: alpine:3.20
