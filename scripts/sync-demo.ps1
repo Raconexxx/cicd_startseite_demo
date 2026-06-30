@@ -49,6 +49,17 @@ if ($exitCode -gt 7) {
 Write-Host "Demo-Repository wurde vollständig synchronisiert: $targetRoot"
 Write-Host "Ausgeschlossen wurden: .git, .env und assets/icons"
 
+$targetIconsPath = Join-Path $targetRoot "assets\icons"
+if (Test-Path -LiteralPath $targetIconsPath) {
+    $resolvedTargetIconsPath = (Resolve-Path -LiteralPath $targetIconsPath).Path
+    if (!$resolvedTargetIconsPath.StartsWith($targetRoot)) {
+        throw "Unerwarteter Icon-Zielpfad: $resolvedTargetIconsPath"
+    }
+
+    Remove-Item -LiteralPath $resolvedTargetIconsPath -Recurse -Force
+    Write-Host "Alter assets/icons-Ordner im Demo wurde entfernt."
+}
+
 git -C $targetRoot status --short
 
 if ($Push) {
