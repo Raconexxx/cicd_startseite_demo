@@ -115,15 +115,15 @@ function resolveSubmittedIconVariantId(
 
     if ($iconMode === 'upload') {
         if (!is_array($upload) || (int) ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-            $formErrors[] = 'Bitte eine SVG-, PNG-, JPG- oder WebP-Datei auswaehlen.';
+            $formErrors[] = 'Bitte eine PNG-, JPG- oder WebP-Datei auswählen.';
             return null;
         }
         if ((int) ($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
             $uploadErrorCode = (int) ($upload['error'] ?? UPLOAD_ERR_OK);
             $uploadErrorText = match ($uploadErrorCode) {
-                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'Die Datei ist zu gross.',
+                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'Die Datei ist zu groß.',
                 UPLOAD_ERR_PARTIAL => 'Die Datei wurde nur teilweise hochgeladen.',
-                UPLOAD_ERR_NO_TMP_DIR => 'Der temporaere Upload-Ordner fehlt.',
+                UPLOAD_ERR_NO_TMP_DIR => 'Der temporäre Upload-Ordner fehlt.',
                 UPLOAD_ERR_CANT_WRITE => 'Die Datei konnte nicht auf den Server geschrieben werden.',
                 UPLOAD_ERR_EXTENSION => 'Eine PHP-Erweiterung hat den Upload gestoppt.',
                 default => 'Fehlercode: ' . $uploadErrorCode,
@@ -152,7 +152,7 @@ function resolveSubmittedIconVariantId(
     }
 
     if ($iconVariantId <= 0) {
-        $formErrors[] = 'Bitte ein Icon auswaehlen oder "Kein Icon" nutzen.';
+        $formErrors[] = 'Bitte ein Icon auswählen oder "Kein Icon" nutzen.';
         return null;
     }
 
@@ -165,7 +165,7 @@ function validateLinkForm(array $linkForm, array &$formErrors): void
         $formErrors[] = 'Bitte einen Titel angeben.';
     }
     if (!filter_var((string) ($linkForm['url'] ?? ''), FILTER_VALIDATE_URL)) {
-        $formErrors[] = 'Bitte eine gueltige URL eingeben.';
+        $formErrors[] = 'Bitte eine gültige URL eingeben.';
     }
 }
 
@@ -241,7 +241,7 @@ function buildLinkModalIconOptions(array $iconOptions, array $linkForm, ?array $
         'id' => $selectedVariantId,
         'icon_set_label' => 'Aktuelles Icon',
         'variant_label' => (string) ($editingLink['icon_label'] ?? $editingLink['title'] ?? 'Icon'),
-        'asset_type' => (string) ($editingLink['icon_asset_type'] ?? 'svg'),
+        'asset_type' => (string) ($editingLink['icon_asset_type'] ?? 'file'),
         'svg_markup' => (string) ($editingLink['svg_markup'] ?? ''),
         'asset_path' => $editingLink['icon_asset_path'] ?? null,
         'asset_blob' => $editingLink['icon_asset_blob'] ?? null,

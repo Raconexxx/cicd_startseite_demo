@@ -4,7 +4,7 @@ declare(strict_types=1);
 function renderIconMarkup(array $link): string
 {
     $label = (string) ($link['icon_label'] ?? $link['title'] ?? 'Icon');
-    $assetType = (string) ($link['icon_asset_type'] ?? 'svg');
+    $assetType = (string) ($link['icon_asset_type'] ?? 'file');
     $cardIconClass = 'card-icon';
 
     if ($assetType === 'file' && !empty($link['icon_asset_path'])) {
@@ -120,7 +120,7 @@ function renderAddCard(int $groupId): string
 
 function renderIconChoiceMarkup(array $icon): string
 {
-    if (($icon['asset_type'] ?? 'svg') === 'file' && !empty($icon['asset_path'])) {
+    if (($icon['asset_type'] ?? 'file') === 'file' && !empty($icon['asset_path'])) {
         return sprintf(
             '<img src="%s" alt="%s" loading="lazy" />',
             htmlspecialchars(appUrl('/' . ltrim((string) $icon['asset_path'], '/'), [], false), ENT_QUOTES, 'UTF-8'),
@@ -128,7 +128,7 @@ function renderIconChoiceMarkup(array $icon): string
         );
     }
 
-    if (($icon['asset_type'] ?? 'svg') === 'blob' && !empty($icon['asset_blob'])) {
+    if (($icon['asset_type'] ?? 'file') === 'blob' && !empty($icon['asset_blob'])) {
         return sprintf(
             '<img src="data:%s;base64,%s" alt="%s" loading="lazy" />',
             htmlspecialchars((string) ($icon['mime_type'] ?? 'application/octet-stream'), ENT_QUOTES, 'UTF-8'),
@@ -149,7 +149,7 @@ function renderLinkModal(
     int $activeGroupId
 ): string {
     $isEditMode = $mode === 'edit';
-    $title = $isEditMode ? 'Seite bearbeiten' : 'Seite hinzufuegen';
+    $title = $isEditMode ? 'Seite bearbeiten' : 'Seite hinzufügen';
     $actionName = $isEditMode ? 'update_link' : 'create_link';
     $cancelParams = ['edit' => 1];
     $actionParams = $isEditMode
@@ -169,7 +169,7 @@ function renderLinkModal(
             <input type="hidden" name="action" value="reuse_link" />
             <input type="hidden" name="group_id" value="<?= (int) $activeGroupId ?>" />
             <div class="builder-field">
-              <label for="reuse_link_id">Vorhandene Seite aus einem deiner anderen Profile hinzufuegen</label>
+              <label for="reuse_link_id">Vorhandene Seite aus einem deiner anderen Profile hinzufügen</label>
               <select id="reuse_link_id" class="reuse-select" name="reuse_link_id" size="<?= min(4, max(1, count($reusableLinks))) ?>">
                 <?php $currentReuseProfile = null; ?>
                 <?php foreach ($reusableLinks as $reusableLink): ?>
@@ -190,7 +190,7 @@ function renderLinkModal(
               </select>
             </div>
             <div class="modal-actions">
-              <button class="action-button" type="submit">Vorhandene Seite hinzufuegen</button>
+              <button class="action-button" type="submit">Vorhandene Seite hinzufügen</button>
             </div>
           </form>
           <div class="modal-divider"><span>Oder neu anlegen</span></div>
@@ -244,16 +244,16 @@ function renderLinkModal(
             </div>
           </div>
           <div class="modal-actions">
-            <button class="action-button primary" type="submit"><?= $isEditMode ? 'Aenderungen speichern' : 'Speichern' ?></button>
+            <button class="action-button primary" type="submit"><?= $isEditMode ? 'Änderungen speichern' : 'Speichern' ?></button>
             <a class="user-panel-link" href="<?= htmlspecialchars(appUrl('/index.php', $cancelParams), ENT_QUOTES, 'UTF-8') ?>">Abbrechen</a>
           </div>
         </form>
         <?php if ($isEditMode): ?>
-          <form method="post" action="<?= htmlspecialchars(appUrl('/index.php', $actionParams), ENT_QUOTES, 'UTF-8') ?>" onsubmit="return confirm('Seite wirklich loeschen?');">
+          <form method="post" action="<?= htmlspecialchars(appUrl('/index.php', $actionParams), ENT_QUOTES, 'UTF-8') ?>" onsubmit="return confirm('Seite wirklich löschen?');">
             <input type="hidden" name="action" value="delete_link" />
             <input type="hidden" name="link_id" value="<?= (int) ($linkForm['id'] ?? 0) ?>" />
             <div class="modal-actions modal-actions-secondary">
-              <button class="action-button danger" type="submit">Loeschen</button>
+              <button class="action-button danger" type="submit">Löschen</button>
             </div>
           </form>
         <?php endif; ?>
