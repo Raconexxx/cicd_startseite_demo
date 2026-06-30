@@ -17,7 +17,8 @@ if ((Split-Path -Leaf $targetRoot) -ne "cicd_startseite_demo") {
 }
 
 $excludeDirs = @(
-    ".git"
+    ".git",
+    "assets\icons"
 )
 
 $excludeFiles = @(
@@ -46,7 +47,7 @@ if ($exitCode -gt 7) {
 }
 
 Write-Host "Demo-Repository wurde vollständig synchronisiert: $targetRoot"
-Write-Host "Ausgeschlossen wurden nur: .git und .env"
+Write-Host "Ausgeschlossen wurden: .git, .env und assets/icons"
 
 git -C $targetRoot status --short
 

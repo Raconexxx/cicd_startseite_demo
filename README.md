@@ -59,7 +59,7 @@ Wichtige Variablen:
 
 Echte Geheimnisse gehören in GitLab CI/CD Variables, GitHub Secrets oder eine lokale `.env`, nicht ins Repository.
 
-SVG-Icons werden nicht mehr aus dem Projekt in die Datenbank importiert. Beim Bootstrap entfernt die App alte SVG-Icon-Varianten aus `icon_variants`; hochgeladene Icons sind auf PNG, JPG und WebP begrenzt.
+SVG-Icons werden nicht mehr aus dem Projekt in die Datenbank importiert. Beim Bootstrap entfernt die App alte SVG-Icon-Varianten aus `icon_variants`; hochgeladene Icons sind auf PNG, JPG und WebP begrenzt. Lokale private Icons können in `assets/icons/` liegen; der Ordner ist per `.gitignore` ausgeblendet und wird nicht ins Demo synchronisiert.
 
 ## GitLab CI/CD
 
