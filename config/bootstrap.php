@@ -276,18 +276,18 @@ function createUploadedIconVariant(PDO $pdo, string $label, array $upload, ?stri
         return 0;
     }
 
-    $isSvg = $extension === 'svg' || str_contains(strtolower($fileContents), '<svg');
+    /* $isSvg = $extension === 'svg' || str_contains(strtolower($fileContents), '<svg');
     if ($isSvg) {
         $error = 'SVG-Uploads sind deaktiviert. Bitte PNG, JPG oder WebP verwenden.';
         return 0;
-    }
+    } */
 
     $assetType = 'file';
     $assetPath = null;
     $assetBlob = null;
     $svgMarkup = null;
 
-    $allowedExtensions = ['png', 'jpg', 'jpeg', 'webp'];
+    $allowedExtensions = ['png', 'jpg', 'jpeg', 'webp', 'svg'];
     if (!in_array($extension, $allowedExtensions, true)) {
         $error = 'Dateityp nicht erlaubt: ' . ($extension !== '' ? $extension : 'unbekannt');
         return 0;
