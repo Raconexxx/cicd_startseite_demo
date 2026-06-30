@@ -1671,7 +1671,13 @@ function justifyKeyword(string $alignMode): string
                 <?php if ($groupIsEditable): ?>
                   <div class="group-drag-handle" draggable="true" aria-label="Gruppe verschieben" title="Verschieben"><?= renderMoveIcon() ?></div>
                   <a class="mini-button" href="<?= htmlspecialchars(appUrl('/index.php', ['edit' => 1, 'edit_group' => (int) $group['id']]), ENT_QUOTES, 'UTF-8') ?>" aria-label="Gruppe bearbeiten">✎</a>
-                  <div class="open-newtab-setting>Test</div>
+                  
+                  /** Lesezeichen */
+                  
+                  <div class="open-newtab-setting>Sollen die Links in einem neuen Tab geöffnet werden?
+                    <input type="checkbox" name="open_in_new_tab" <?= ($group['open_in_new_tab'] ?? true) ? 'checked' : '' ?> />
+                    
+                  </div>
                   <?php endif; ?>
               </div>
               <?php if ($groupIsEditable && $editGroupId === (int) $group['id']): ?>
