@@ -1671,7 +1671,8 @@ function justifyKeyword(string $alignMode): string
                 <?php if ($groupIsEditable): ?>
                   <div class="group-drag-handle" draggable="true" aria-label="Gruppe verschieben" title="Verschieben"><?= renderMoveIcon() ?></div>
                   <a class="mini-button" href="<?= htmlspecialchars(appUrl('/index.php', ['edit' => 1, 'edit_group' => (int) $group['id']]), ENT_QUOTES, 'UTF-8') ?>" aria-label="Gruppe bearbeiten">✎</a>
-                <?php endif; ?>
+                  <div class="open-newtab-setting>Test</div>
+                  <?php endif; ?>
               </div>
               <?php if ($groupIsEditable && $editGroupId === (int) $group['id']): ?>
                 <form class="group-layout-form" method="post" action="<?= htmlspecialchars(appUrl('/index.php', ['edit' => 1]), ENT_QUOTES, 'UTF-8') ?>">
