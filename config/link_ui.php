@@ -239,7 +239,7 @@ function renderLinkModal(
                   <input type="radio" name="icon_mode" value="upload" <?= (($linkForm['icon_mode'] ?? ($isEditMode ? 'library' : 'none')) === 'upload') ? 'checked' : '' ?> />
                   <span>Icon hochladen</span>
                 </span>
-                <input id="icon_svg" name="icon_svg" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" />
+                <input id="icon_svg" name="icon_svg" type="file" accept=".png,.jpg,.jpeg,.webp,.svg,image/png,image/jpeg,image/webp,image/svg" />
               </label>
             </div>
           </div>
