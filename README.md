@@ -10,7 +10,7 @@ Das Projekt dient gleichzeitig als reales Deployment-Projekt und als CI/CD-Unter
 - `login.php`: Anmeldung und Registrierung
 - `impressum.php` und `datenschutz.php`: öffentliche Pflichtseiten
 - `config/`: Konfiguration, Bootstrap, UI- und Aktionslogik
-- `assets/icons/`: lokale Icon-Dateien
+- `assets/uploads/icons/`: hochgeladene Icon-Dateien
 - `assets/pictures/`: Bilder für die README-Dokumentation
 - `docker-compose.yml`: PHP/Apache, MariaDB und phpMyAdmin
 - `.gitlab-ci.yml`: GitLab-Pipeline mit SSH-Deployment
@@ -58,6 +58,8 @@ Wichtige Variablen:
 | `SSH_PUBLIC_KEY` | optionaler Public Key für SSH-Login |
 
 Echte Geheimnisse gehören in GitLab CI/CD Variables, GitHub Secrets oder eine lokale `.env`, nicht ins Repository.
+
+SVG-Icons werden nicht mehr aus dem Projekt in die Datenbank importiert. Beim Bootstrap entfernt die App alte SVG-Icon-Varianten aus `icon_variants`; hochgeladene Icons sind auf PNG, JPG und WebP begrenzt.
 
 ## GitLab CI/CD
 
